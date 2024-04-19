@@ -1,8 +1,12 @@
 import { useState } from 'react'
 
+import Board from './components/Game/Board.js'
+import Player from './components/Player/Player'
+import Logs from './components/Log/Logs.js'
+import GameOver from './components/Game/GameOver.js'
 import { INITIAL_GAME_BOARD, WINNING_COMBINATIONS, PLAYERS } from './data.js'
 
-const currentPlayer = (gameTurns) => {
+const setCurrentPlayer = (gameTurns) => {
     let currentPlayer = 'X'
 
     if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
@@ -49,10 +53,76 @@ const setWinner = (gameBoard, players) => {
             winner = players[firstSquareSymbol]
         }
     }
+
+    return winner
 }
 
 const App = () => {
-    return <main></main>
+    const [players, setPlayers] = useState(PLAYERS)
+    const [gameTurns, setGameTurns] = useState<any[]>([])
+
+    const activePlayer = setCurrentPlayer(gameTurns)
+    const gameBoard = setGameBoard(gameTurns)
+    const winner = setWinner(gameBoard, players)
+    const hasDraw = gameTurns.length === 9 && !winner
+
+    const handleSelectSquare = (rowIndex, colIndex) => {
+        setGameTurns((prevTurns) => {
+            const currentPlayer = setCurrentPlayer(prevTurns)
+
+            const updatedTurns = [
+                {
+                    square: {
+                        row: rowIndex,
+                        col: colIndex,
+                    },
+                    player: currentPlayer,
+                },
+                ...prevTurns,
+            ]
+
+            return updatedTurns
+        })
+    }
+
+    const handleRestart = () => {
+        setGameTurns([])
+    }
+
+    const handlePlayerNameChange = (symbol, newName) => {
+        setPlayers((prevPlayers) => {
+            return {
+                ...prevPlayers,
+                [symbol]: newName,
+            }
+        })
+    }
+
+    return (
+        <main>
+            <div id="game-container">
+                <ol id="players" className="highlight-player">
+                    <Player
+                        initialName={PLAYERS.X}
+                        symbol="X"
+                        isActive={activePlayer === 'X'}
+                        onChangeName={handlePlayerNameChange}
+                    />
+                    <Player
+                        initialName={PLAYERS.O}
+                        symbol="O"
+                        isActive={activePlayer === 'O'}
+                        onChangeName={handlePlayerNameChange}
+                    />
+                </ol>
+                {(winner || hasDraw) && (
+                    <GameOver winner={winner} onRestart={handleRestart} />
+                )}
+                <Board onSelectSquare={handleSelectSquare} board={gameBoard} />
+            </div>
+            <Logs turns={gameTurns} />
+        </main>
+    )
 }
 
 export default App

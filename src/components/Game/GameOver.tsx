@@ -1,4 +1,4 @@
-const Over = ({ winner, onRestart }) => {
+const GameOver = ({ winner, onRestart }) => {
     return (
         <div id="game-over">
             <div id="game-over">
@@ -14,4 +14,4 @@ const Over = ({ winner, onRestart }) => {
     )
 }
 
-export default Over
+export default GameOver
