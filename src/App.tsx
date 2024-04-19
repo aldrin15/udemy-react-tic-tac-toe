@@ -1,35 +1,58 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import { INITIAL_GAME_BOARD, WINNING_COMBINATIONS, PLAYERS } from './data.js'
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+const currentPlayer = (gameTurns) => {
+    let currentPlayer = 'X'
+
+    if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
+        currentPlayer = 'O'
+    }
+
+    return currentPlayer
+}
+
+const setGameBoard = (gameTurns) => {
+    /* This line is to reset the Board */
+    let gameBoard = [...INITIAL_GAME_BOARD.map((array) => [...array])]
+
+    for (const turn of gameTurns) {
+        const { square, player } = turn
+        const { row, col } = square
+
+        gameBoard[row][col] = player
+    }
+
+    return gameBoard
+}
+
+/*
+ * @desc To set which player wins
+ */
+const setWinner = (gameBoard, players) => {
+    let winner
+
+    for (const combination of WINNING_COMBINATIONS) {
+        const firstSquareSymbol =
+            gameBoard[combination[0].row][combination[0].column]
+        const secondSquareSymbol =
+            gameBoard[combination[1].row][combination[1].column]
+        const thirdSquareSymbol =
+            gameBoard[combination[2].row][combination[2].column]
+
+        if (
+            firstSquareSymbol &&
+            firstSquareSymbol === secondSquareSymbol &&
+            firstSquareSymbol &&
+            thirdSquareSymbol
+        ) {
+            winner = players[firstSquareSymbol]
+        }
+    }
+}
+
+const App = () => {
+    return <main></main>
 }
 
 export default App
